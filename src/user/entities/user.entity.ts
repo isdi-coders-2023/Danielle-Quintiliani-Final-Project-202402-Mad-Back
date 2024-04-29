@@ -7,3 +7,10 @@ export class User {
   item: [];
   role: 'USER' | 'ADMIN' | 'CLUB';
 }
+export class UserUpdateDto {
+  email?: string;
+  name?: string;
+  password?: string;
+  birthday?: string;
+  avatar?: string;
+}
