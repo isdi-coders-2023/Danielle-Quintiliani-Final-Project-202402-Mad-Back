@@ -22,7 +22,7 @@ export class LoggedGuard implements CanActivate {
     if (!auth) {
       throw new BadRequestException('Authorization is required');
     }
-    const token = auth.slice(7);
+    const token = auth.split(' ')[1];
     try {
       request.payload = await this.tokenService.compareToken(token);
       return true;

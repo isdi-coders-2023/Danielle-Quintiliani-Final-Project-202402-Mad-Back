@@ -46,11 +46,9 @@ describe('UserService with good response', () => {
     });
     expect(result).toEqual({ id: 1 });
   });
-  it('should ReadByEmail a user', async () => {
-    const result = await service.findByEmail('daniele@test.com');
-    expect(mock.user.findUnique).toHaveBeenCalledWith({
-      where: { email: 'daniele@test.com' },
-    });
+  it('should find for email a user', async () => {
+    const result = await service.findForLogin('email');
+    expect(mock.user.findUnique).toHaveBeenCalled();
     expect(result).toEqual({ id: 1 });
   });
   it('should Create a user', async () => {
@@ -100,10 +98,10 @@ describe('UserService throw error', () => {
       new NotFoundException(`User 1 not found`),
     );
   });
-  test('should throw error on findByEmail', async () => {
+  test('should throw error on find for mail', async () => {
     const email = '';
-    await expect(service.findByEmail(email)).rejects.toThrow(
-      `User with email ${email} not found`,
+    await expect(service.findForLogin(email)).rejects.toThrow(
+      `User 1 not found`,
     );
   });
   test('should throw error on update', async () => {
