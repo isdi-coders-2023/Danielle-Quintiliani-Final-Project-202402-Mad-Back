@@ -3,7 +3,7 @@ import { LoggedGuard } from './logged.guard';
 import { TokenService } from '../token/token.service';
 
 const tokenMock: TokenService = {
-  verifyToken: jest.fn().mockResolvedValue({}),
+  compareToken: jest.fn().mockResolvedValue({}),
 } as unknown as TokenService;
 
 describe('AuthGuard', () => {
