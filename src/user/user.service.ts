@@ -50,7 +50,7 @@ export class UserService {
     try {
       return await this.service.user.findUnique({ where: { id } });
     } catch (error) {
-      throw new NotFoundException(`User ${id} not found`);
+      throw new NotFoundException(`User ${id} not found, can't remove`);
     }
   }
 }

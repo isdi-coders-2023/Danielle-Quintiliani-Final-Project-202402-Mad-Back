@@ -115,7 +115,7 @@ describe('UserService throw error', () => {
   test('should throw error on remove', async () => {
     const userId = '4';
     await expect(service.remove(userId)).rejects.toThrow(
-      `User ${userId} not found`,
+      `User ${userId} not found, can't remove`,
     );
   });
 });
