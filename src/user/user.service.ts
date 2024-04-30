@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './entities/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserUpdateDto } from './entities/user.entity';
+import { SignUser, UserUpdateDto } from './entities/user.entity';
 const select = {
   id: true,
   name: true,
@@ -30,12 +30,17 @@ export class UserService {
     }
   }
 
-  async findByEmail(email: string) {
-    try {
-      return await this.service.user.findUnique({ where: { email } });
-    } catch (error) {
-      throw new NotFoundException(`User with email ${email} not found`);
-    }
+  async findForLogin(email: string): Promise<SignUser | null> {
+    const result = await this.service.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        password: true,
+        role: true,
+      },
+    });
+
+    return result;
   }
 
   async update(id: string, data: Partial<UserUpdateDto>) {
@@ -50,7 +55,7 @@ export class UserService {
     try {
       return await this.service.user.findUnique({ where: { id } });
     } catch (error) {
-      throw new NotFoundException(`User ${id} not found`);
+      throw new NotFoundException(`User ${id} not found, can't remove`);
     }
   }
 }
