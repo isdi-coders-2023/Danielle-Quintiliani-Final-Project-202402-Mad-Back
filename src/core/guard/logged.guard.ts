@@ -4,17 +4,13 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
-  Logger,
 } from '@nestjs/common';
 
 import { TokenService } from '../token/token.service';
 
 @Injectable()
 export class LoggedGuard implements CanActivate {
-  constructor(
-    private readonly logger: Logger,
-    private readonly tokenService: TokenService,
-  ) {}
+  constructor(private readonly tokenService: TokenService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
