@@ -8,7 +8,7 @@ export class FileService {
     file: Express.Multer.File,
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     const options = {
-      folder: 'nest_2024_1',
+      folder: 'avatar',
       public_id: `${owner}_${file.fieldname}_${file.originalname}`,
       use_filename: true,
       unique_filename: false,

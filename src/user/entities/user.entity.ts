@@ -1,10 +1,12 @@
+import { ImgData } from './avatar.entity';
+
 export class User {
   id: string;
   name: string;
   email: string;
   password: string;
   birthday: string;
-  avatar: string;
+  avatar: Partial<ImgData> | null;
   item: [];
   role: 'USER' | 'ADMIN' | 'CLUB';
 }
@@ -13,7 +15,7 @@ export class CreateUserDto {
   email: string;
   password: string;
   birthday: string;
-  avatar?: string;
+  avatar?: Partial<ImgData> | null;
 }
 
 export class UserUpdateDto {
@@ -21,7 +23,7 @@ export class UserUpdateDto {
   name?: string;
   password?: string;
   birthday?: string;
-  avatar?: string;
+  avatar?: Partial<ImgData> | null;
 }
 export class SignUser {
   id: string;
