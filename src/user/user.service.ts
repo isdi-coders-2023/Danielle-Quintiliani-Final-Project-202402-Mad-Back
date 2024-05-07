@@ -10,6 +10,7 @@ import {
 import { ImgData } from './entities/avatar.entity';
 
 const select = {
+  name: true,
   id: true,
   email: true,
   role: true,

@@ -1,3 +1,4 @@
+import { Item } from 'src/item/entities/item.entity';
 import { ImgData } from './avatar.entity';
 
 export class User {
@@ -7,7 +8,7 @@ export class User {
   password: string;
   birthday: string;
   avatar: Partial<ImgData> | null;
-  item: [];
+  item: Item[];
   role: 'USER' | 'ADMIN' | 'CLUB';
 }
 export class CreateUserDto {

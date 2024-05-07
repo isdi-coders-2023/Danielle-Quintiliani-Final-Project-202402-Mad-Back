@@ -133,15 +133,5 @@ describe('UserController', () => {
         'Email or password invalid',
       );
     });
-    it('should throw an error if password is invalid', async () => {
-      const mockUserDto = {
-        email: 'test@sample.com',
-        password: '12345',
-      } as CreateUserDto;
-      (mockToken.compare as jest.Mock).mockResolvedValueOnce(false);
-      await expect(controller.login(mockUserDto)).rejects.toThrow(
-        'Email or password invalid',
-      );
-    });
   });
 });

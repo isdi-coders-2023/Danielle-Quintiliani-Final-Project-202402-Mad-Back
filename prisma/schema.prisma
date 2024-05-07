@@ -35,7 +35,7 @@ id String @id @default(cuid())
 title String
 content String
 price String
-item User @relation(fields: [ownerItemId], references: [id])
+owner User @relation(fields: [ownerItemId], references: [id])
 ownerItemId String
 createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt

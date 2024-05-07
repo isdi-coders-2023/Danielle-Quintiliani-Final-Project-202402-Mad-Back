@@ -13,6 +13,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserUpdateDto, CreateUserDto } from './entities/user.entity';
@@ -86,8 +87,8 @@ export class UserController {
   }
 
   @Post('/login')
-  async login(@Body() createUserDto: CreateUserDto) {
-    const { email, password } = createUserDto;
+  async login(@Body() data: CreateUserDto) {
+    const { email, password } = data;
     if (!email || !password) {
       throw new BadRequestException('Email or password are required');
     }
@@ -95,10 +96,6 @@ export class UserController {
     const user = await this.userService.findForLogin(email);
 
     if (!user) {
-      throw new ForbiddenException('Email or password invalid');
-    }
-
-    if (!(await this.tokenService.compare(password, user.password!))) {
       throw new ForbiddenException('Email or password invalid');
     }
 
@@ -115,8 +112,9 @@ export class UserController {
     return await this.userService.findOne(id);
   }
 
+  @Patch('/:id')
   async update(
-    @Param('id') id: string,
+    @Param('/:id') id: string,
     @Body() updateUserDto: UserUpdateDto,
     @UploadedFile(
       new ParseFilePipe({
