@@ -1,21 +1,41 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './entities/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { SignUser, UserUpdateDto } from './entities/user.entity';
+import {
+  CreateUserDto,
+  SignUser,
+  User,
+  UserUpdateDto,
+} from './entities/user.entity';
+import { ImgData } from './entities/avatar.entity';
+
 const select = {
-  id: true,
   name: true,
+  id: true,
   email: true,
-  birthday: true,
+  role: true,
+  avatar: {
+    select: {
+      publicId: true,
+    },
+  },
 };
 
 @Injectable()
 export class UserService {
   constructor(private service: PrismaService) {}
 
-  async create(data: CreateUserDto) {
-    return await this.service.user.create({ data });
+  async create(
+    data: CreateUserDto,
+    imgData: ImgData | null,
+  ): Promise<Partial<User>> {
+    return this.service.user.create({
+      data: {
+        ...data,
+        avatar: imgData ? { create: imgData } : {},
+      },
+      select,
+    });
   }
 
   async findAll() {
@@ -43,9 +63,27 @@ export class UserService {
     return result;
   }
 
-  async update(id: string, data: Partial<UserUpdateDto>) {
+  async update(
+    id: string,
+    data: UserUpdateDto,
+    imgData: ImgData | null,
+  ): Promise<Partial<User>> {
     try {
-      return await this.service.user.update({ where: { id }, data });
+      return await this.service.user.update({
+        where: { id },
+        data: {
+          ...data,
+          avatar: imgData
+            ? {
+                upsert: {
+                  create: imgData,
+                  update: imgData,
+                },
+              }
+            : {},
+        },
+        select,
+      });
     } catch (error) {
       throw new NotFoundException(`User ${id} not found`);
     }

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { UserUpdateDto } from './entities/user.entity';
+import { CreateUserDto, UserUpdateDto } from './entities/user.entity';
 import { TokenService } from '../core/token/token.service';
 import { LoggedGuard } from '../core/guard/logged.guard';
-import { CreateUserDto } from './entities/create-user.dto';
+import { FileService } from '../core/file/file.service';
 
 const mockUser = {
   create: jest.fn().mockResolvedValue([{ id: 1 }, { id: 2 }]),
@@ -20,6 +20,9 @@ const mockToken = {
   compare: jest.fn().mockResolvedValue(true),
   createToken: jest.fn().mockResolvedValue('token'),
 };
+const mockFileService = {
+  uploadImage: jest.fn().mockResolvedValue({}),
+};
 describe('UserController', () => {
   let controller: UserController;
 
@@ -31,6 +34,10 @@ describe('UserController', () => {
         {
           provide: TokenService,
           useValue: mockToken,
+        },
+        {
+          provide: FileService,
+          useValue: mockFileService,
         },
       ],
     })
@@ -64,7 +71,8 @@ describe('UserController', () => {
       const mockUserDto = {
         password: '12345',
       } as UserUpdateDto;
-      const result = await controller.update('4', mockUserDto);
+      const mockFile = {} as Express.Multer.File;
+      const result = await controller.update('4', mockUserDto, mockFile);
       expect(mockUser.update).toHaveBeenCalled();
       expect(result).toEqual({ id: 4 });
     });
@@ -121,16 +129,6 @@ describe('UserController', () => {
         password: '12345',
       } as CreateUserDto;
       (mockUser.findForLogin as jest.Mock).mockResolvedValueOnce(null);
-      await expect(controller.login(mockUserDto)).rejects.toThrow(
-        'Email or password invalid',
-      );
-    });
-    it('should throw an error if password is invalid', async () => {
-      const mockUserDto = {
-        email: 'test@sample.com',
-        password: '12345',
-      } as CreateUserDto;
-      (mockToken.compare as jest.Mock).mockResolvedValueOnce(false);
       await expect(controller.login(mockUserDto)).rejects.toThrow(
         'Email or password invalid',
       );

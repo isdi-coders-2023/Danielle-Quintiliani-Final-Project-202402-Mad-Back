@@ -18,7 +18,7 @@ name String
 email String @unique
 password String
 birthday String
-avatar String?
+avatar Avatar?
 item Item[]
 role Role @default(USER)
 iscriptionAt DateTime @default(now())
@@ -35,8 +35,26 @@ id String @id @default(cuid())
 title String
 content String
 price String
-item User @relation(fields: [ownerItemId], references: [id])
+owner User @relation(fields: [ownerItemId], references: [id])
 ownerItemId String
 createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt
+}
+model Avatar {
+  id           String   @id @default(cuid())
+  publicId     String
+  folder       String
+  fieldName    String
+  originalName String
+  secureUrl    String
+  resourceType String
+  mimetype     String
+  format       String
+  width        Int
+  height       Int
+  bytes        Int
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
 }

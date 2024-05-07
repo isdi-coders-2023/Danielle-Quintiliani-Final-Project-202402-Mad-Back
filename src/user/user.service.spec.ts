@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './entities/create-user.dto';
-import { UserUpdateDto } from './entities/user.entity';
+import { CreateUserDto, UserUpdateDto } from './entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
+import { ImgData } from './entities/avatar.entity';
 
 describe('UserService with good response', () => {
   let service: UserService;
@@ -14,6 +14,9 @@ describe('UserService with good response', () => {
       create: jest.fn().mockResolvedValue({ id: 2 }),
       update: jest.fn().mockResolvedValue({ id: 3 }),
       delete: jest.fn().mockResolvedValue({ id: 4 }),
+    },
+    avatar: {
+      delete: jest.fn().mockReturnValue({}),
     },
   };
 
@@ -51,69 +54,84 @@ describe('UserService with good response', () => {
     expect(mock.user.findUnique).toHaveBeenCalled();
     expect(result).toEqual({ id: 1 });
   });
-  it('should Create a user', async () => {
-    const result = await service.create({} as unknown as CreateUserDto);
-    expect(mock.user.create).toHaveBeenCalledTimes(1);
-    expect(result).toEqual({ id: 2 });
-  });
-  it('should Update a user', async () => {
-    const result = await service.update(
-      '3',
-      {} as unknown as Partial<UserUpdateDto>,
-    );
-    expect(mock.user.update).toHaveBeenCalledTimes(1);
-    expect(mock.user.update).toHaveBeenCalledWith({
-      where: { id: '3' },
-      data: {},
+  describe('When we use the method create', () => {
+    describe('And we do not provide an image', () => {
+      it('Then it should return the created user', async () => {
+        const data: CreateUserDto = {} as CreateUserDto;
+        const result = await service.create(data, null);
+        expect(mock.user.create).toHaveBeenCalled();
+        expect(result).toEqual({ id: 2 });
+      });
     });
-    expect(result).toEqual({ id: 3 });
+    describe('And we provide an image', () => {
+      it('Then it should return the created user with the image', async () => {
+        const data: CreateUserDto = {} as CreateUserDto;
+        const imgData = {} as ImgData;
+        const result = await service.create(data, imgData);
+        expect(mock.user.create).toHaveBeenCalled();
+        expect(result).toEqual({ id: 2 });
+      });
+    });
+    it('should Update a user', async () => {
+      const result = await service.update(
+        '3',
+        {} as unknown as Partial<UserUpdateDto>,
+        null,
+      );
+      expect(mock.user.update).toHaveBeenCalledTimes(1);
+      expect(mock.user.update).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: '3' } }),
+      );
+      expect(result).toEqual({ id: 3 });
+    });
   });
-});
-describe('UserService throw error', () => {
-  let service: UserService;
 
-  const mockPrismaService = {
-    user: {
-      findUnique: jest.fn().mockRejectedValue(new Error('User 1 not found')),
-      update: jest.fn().mockRejectedValue(new Error('User 3 not found')),
-      delete: jest.fn().mockRejectedValue(new Error('User 4 not found')),
-    },
-  };
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        {
-          provide: PrismaService,
-          useValue: mockPrismaService,
-        },
-        UserService,
-      ],
-    }).compile();
+  describe('UserService throw error', () => {
+    let service: UserService;
 
-    service = module.get<UserService>(UserService);
-  });
-  test('should throw error on findOne', async () => {
-    const userId = '1';
-    await expect(service.findOne(userId)).rejects.toThrow(
-      new NotFoundException(`User 1 not found`),
-    );
-  });
-  test('should throw error on find for mail', async () => {
-    const email = '';
-    await expect(service.findForLogin(email)).rejects.toThrow(
-      `User 1 not found`,
-    );
-  });
-  test('should throw error on update', async () => {
-    const userId = '3';
-    await expect(service.update(userId, {})).rejects.toThrow(
-      `User ${userId} not found`,
-    );
-  });
-  test('should throw error on remove', async () => {
-    const userId = '4';
-    await expect(service.remove(userId)).rejects.toThrow(
-      `User ${userId} not found, can't remove`,
-    );
+    const mockPrismaService = {
+      user: {
+        findUnique: jest.fn().mockRejectedValue(new Error('User 1 not found')),
+        update: jest.fn().mockRejectedValue(new Error('User 3 not found')),
+        delete: jest.fn().mockRejectedValue(new Error('User 4 not found')),
+      },
+    };
+    beforeEach(async () => {
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          {
+            provide: PrismaService,
+            useValue: mockPrismaService,
+          },
+          UserService,
+        ],
+      }).compile();
+
+      service = module.get<UserService>(UserService);
+    });
+    test('should throw error on findOne', async () => {
+      const userId = '1';
+      await expect(service.findOne(userId)).rejects.toThrow(
+        new NotFoundException(`User 1 not found`),
+      );
+    });
+    test('should throw error on find for mail', async () => {
+      const email = '';
+      await expect(service.findForLogin(email)).rejects.toThrow(
+        `User 1 not found`,
+      );
+    });
+    test('should throw error on update', async () => {
+      const userId = '3';
+      await expect(service.update(userId, {}, null)).rejects.toThrow(
+        `User ${userId} not found`,
+      );
+    });
+    test('should throw error on remove', async () => {
+      const userId = '4';
+      await expect(service.remove(userId)).rejects.toThrow(
+        `User ${userId} not found, can't remove`,
+      );
+    });
   });
 });
