@@ -31,6 +31,26 @@ export class UserController {
     private readonly filesService: FileService,
   ) {}
 
+  avatar = async (
+    file: Express.Multer.File,
+    email: string,
+  ): Promise<ImgData> => {
+    const cloudinaryResponse = await this.filesService.uploadImage(email, file);
+    return {
+      publicId: cloudinaryResponse.public_id,
+      folder: cloudinaryResponse.folder,
+      fieldName: file.fieldname,
+      originalName: file.originalname,
+      secureUrl: cloudinaryResponse.secure_url,
+      resourceType: cloudinaryResponse.resource_type,
+      mimetype: file.mimetype,
+      format: cloudinaryResponse.format,
+      width: cloudinaryResponse.width,
+      height: cloudinaryResponse.height,
+      bytes: cloudinaryResponse.bytes,
+    };
+  };
+
   @UseInterceptors(FileInterceptor('avatar'))
   @Post('/register')
   async register(
@@ -49,23 +69,7 @@ export class UserController {
     const { email } = createUserDto;
     let avatar: ImgData | null = null;
     if (file) {
-      const cloudinaryResponse = await this.filesService.uploadImage(
-        email,
-        file,
-      );
-      avatar = {
-        publicId: cloudinaryResponse.public_id,
-        folder: cloudinaryResponse.folder,
-        fieldName: file.fieldname,
-        originalName: file.originalname,
-        secureUrl: cloudinaryResponse.secure_url,
-        resourceType: cloudinaryResponse.resource_type,
-        mimetype: file.mimetype,
-        format: cloudinaryResponse.format,
-        width: cloudinaryResponse.width,
-        height: cloudinaryResponse.height,
-        bytes: cloudinaryResponse.bytes,
-      };
+      avatar = await this.avatar(file, email);
     }
 
     createUserDto.password = await this.tokenService.hash(
@@ -131,23 +135,7 @@ export class UserController {
       updateUserDto.email || (await this.userService.findOne(id)).email;
     let avatar: ImgData | null = null;
     if (file) {
-      const cloudinaryResponse = await this.filesService.uploadImage(
-        email,
-        file,
-      );
-      avatar = {
-        publicId: cloudinaryResponse.public_id,
-        folder: cloudinaryResponse.folder,
-        fieldName: file.fieldname,
-        originalName: file.originalname,
-        secureUrl: cloudinaryResponse.secure_url,
-        resourceType: cloudinaryResponse.resource_type,
-        mimetype: file.mimetype,
-        format: cloudinaryResponse.format,
-        width: cloudinaryResponse.width,
-        height: cloudinaryResponse.height,
-        bytes: cloudinaryResponse.bytes,
-      };
+      avatar = await this.avatar(file, email);
     }
     if (updateUserDto.password) {
       updateUserDto.password = await this.tokenService.hash(
