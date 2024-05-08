@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ItemController } from './item.controller';
 import { ItemService } from './item.service';
 import { UpdateItemDto } from './entities/item.entity';
+
 const mockItem = {
   create: jest.fn().mockResolvedValue({ id: 1 }),
   findAllItem: jest.fn().mockResolvedValue([{ id: 2 }]),
@@ -16,7 +17,13 @@ describe('ItemController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ItemController],
-      providers: [{ provide: ItemService, useValue: mockItem }],
+      providers: [
+        { provide: ItemService, useValue: mockItem },
+        {
+          provide: 'REPO_SERVICE',
+          useValue: mockItem,
+        },
+      ],
     }).compile();
 
     controller = module.get<ItemController>(ItemController);

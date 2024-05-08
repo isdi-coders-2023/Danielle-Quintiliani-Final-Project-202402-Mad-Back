@@ -37,6 +37,7 @@ content String
 price String
 owner User @relation(fields: [ownerItemId], references: [id])
 ownerItemId String
+image ItemImg[]
 createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt
 }
@@ -55,6 +56,24 @@ model Avatar {
   bytes        Int
   user         User     @relation(fields: [userId], references: [id])
   userId       String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+}
+model ItemImg {
+  id           String   @id @default(cuid())
+  publicId     String
+  folder       String
+  fieldName    String
+  originalName String
+  secureUrl    String
+  resourceType String
+  mimetype     String
+  format       String
+  width        Int
+  height       Int
+  bytes        Int
+  item         Item     @relation(fields: [itemId], references: [id])
+  itemId       String   @unique
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now())
 }
