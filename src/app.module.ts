@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { CoreModule } from './core/core.module';
 import { ConfigModule } from '@nestjs/config';
 import { ItemModule } from './item/item.module';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ItemModule } from './item/item.module';
     PrismaModule,
     CoreModule,
     ItemModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
