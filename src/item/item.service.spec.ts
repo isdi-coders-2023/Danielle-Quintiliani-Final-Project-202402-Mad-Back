@@ -3,6 +3,7 @@ import { ItemService } from './item.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateItemDto, UpdateItemDto } from './entities/item.entity';
 import { NotFoundException } from '@nestjs/common';
+
 const itemMock = {
   item: {
     findMany: jest.fn().mockResolvedValue([{ id: 1 }, { id: 2 }]),

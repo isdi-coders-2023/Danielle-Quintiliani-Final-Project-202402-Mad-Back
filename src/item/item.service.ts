@@ -20,7 +20,9 @@ export class ItemService {
 
   async create(data: CreateItemDto): Promise<Partial<Item>> {
     return await this.prisma.item.create({
-      data: { ...data },
+      data: {
+        ...data,
+      },
       select,
     });
   }
@@ -41,7 +43,9 @@ export class ItemService {
     try {
       return await this.prisma.item.update({
         where: { id },
-        data: { ...updateItemDto },
+        data: {
+          ...updateItemDto,
+        },
         select,
       });
     } catch (error) {

@@ -1,4 +1,5 @@
 import { User } from '@prisma/client';
+import { ImgData } from '../../user/entities/avatar.entity';
 
 export class Item {
   id: string;
@@ -6,6 +7,7 @@ export class Item {
   content: string;
   price: string;
   ownwer: User;
+  image: ImgData;
 }
 
 export class CreateItemDto {
