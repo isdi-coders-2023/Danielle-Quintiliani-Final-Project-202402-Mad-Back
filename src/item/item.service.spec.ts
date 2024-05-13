@@ -47,8 +47,9 @@ describe('ItemService', () => {
     expect(result).toEqual({ id: 1 });
   });
   it('should return the created item', async () => {
+    const files = new Array(2).fill({} as Express.Multer.File);
     const data: CreateItemDto = {} as CreateItemDto;
-    const result = await service.create(data);
+    const result = await service.create(data, files);
     expect(itemMock.item.create).toHaveBeenCalled();
     expect(result).toEqual({ id: 2 });
   });

@@ -15,6 +15,7 @@ export class CreateItemDto {
   content: string;
   price: string;
   ownerItemId: string;
+  image: Partial<ImgData>[];
 }
 
 export class UpdateItemDto {

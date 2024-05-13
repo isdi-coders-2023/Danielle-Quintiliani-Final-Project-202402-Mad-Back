@@ -2,6 +2,25 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ItemController } from './item.controller';
 import { ItemService } from './item.service';
 import { UpdateItemDto } from './entities/item.entity';
+import { FileService } from '../core/file/file.service';
+
+const mockFiles = {
+  uploadImage: jest.fn().mockResolvedValue([
+    {
+      publicId: '',
+      folder: '',
+      fieldName: '',
+      originalName: '',
+      secureUrl: '',
+      resourceType: '',
+      mimetype: '',
+      format: 'jpg',
+      width: 100,
+      height: 100,
+      bytes: 100,
+    },
+  ]),
+} as unknown as FileService;
 
 const mockItem = {
   create: jest.fn().mockResolvedValue({ id: 1 }),
@@ -19,6 +38,7 @@ describe('ItemController', () => {
       controllers: [ItemController],
       providers: [
         { provide: ItemService, useValue: mockItem },
+        { provide: FileService, useValue: mockFiles },
         {
           provide: 'REPO_SERVICE',
           useValue: mockItem,
@@ -38,9 +58,20 @@ describe('ItemController', () => {
         title: '',
         price: '',
         content: '',
+        image: [],
         ownerItemId: '',
       };
-      const result = await controller.create(mockItemDto);
+      const mockImage = [
+        {
+          fieldname: 'image',
+          originalname: 'test.jpg',
+          encoding: '7bit',
+          mimetype: 'image/jpeg',
+          buffer: Buffer.from('test_image_data'),
+          size: 1000,
+        } as Express.Multer.File,
+      ];
+      const result = await controller.create(mockItemDto, mockImage);
       expect(mockItem.create).toHaveBeenCalled();
       expect(result).toEqual({ id: 1 });
     });
