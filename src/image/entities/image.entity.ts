@@ -1,4 +1,4 @@
-export type ItemImage = {
+export type ItemImg = {
   itemId: string;
   publicId: string;
   folder: string;

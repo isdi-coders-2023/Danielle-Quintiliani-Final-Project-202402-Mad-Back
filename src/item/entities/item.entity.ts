@@ -6,8 +6,8 @@ export class Item {
   title: string;
   content: string;
   price: string;
-  ownwer: User;
-  image: ImgData;
+  owner: Partial<User>;
+  image: Partial<ImgData>[];
 }
 
 export class CreateItemDto {

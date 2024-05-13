@@ -9,14 +9,59 @@ import {
 } from './entities/user.entity';
 import { ImgData } from './entities/avatar.entity';
 
-const select = {
+/* Valutar si calbiar de select! 
+const selectCreateDto = {
   name: true,
   id: true,
   email: true,
   role: true,
+  birthday: true,
   avatar: {
     select: {
       publicId: true,
+      secureUrl: true,
+      width: true,
+      height: true,
+      format: true,
+      originalName: true,
+    },
+  },
+}; */
+
+export const select = {
+  name: true,
+  id: true,
+  email: true,
+  role: true,
+  birthday: true,
+  iscriptionAt: true,
+  avatar: {
+    select: {
+      publicId: true,
+      secureUrl: true,
+      width: true,
+      height: true,
+      format: true,
+      originalName: true,
+    },
+  },
+  item: {
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      price: true,
+      owner: true,
+      image: {
+        select: {
+          publicId: true,
+          secureUrl: true,
+          width: true,
+          height: true,
+          format: true,
+          originalName: true,
+        },
+      },
     },
   },
 };
@@ -42,9 +87,9 @@ export class UserService {
     return await this.service.user.findMany({ select });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string) /* : Promise<Partial<User>> */ {
     try {
-      return await this.service.user.findUnique({ where: { id } });
+      return await this.service.user.findUnique({ where: { id }, select });
     } catch (error) {
       throw new NotFoundException(`User ${id} not found`);
     }
