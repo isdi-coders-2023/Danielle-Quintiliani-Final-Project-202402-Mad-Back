@@ -7,11 +7,14 @@ import { FileService } from '../core/file/file.service';
 const mockFiles = {
   uploadImage: jest.fn().mockResolvedValue([
     {
-      public_id: 'public_id',
-      folder: 'folder',
-      secure_url: 'secure_url',
-      resource_type: 'resource_type',
-      format: 'format',
+      publicId: '',
+      folder: '',
+      fieldName: '',
+      originalName: '',
+      secureUrl: '',
+      resourceType: '',
+      mimetype: '',
+      format: 'jpg',
       width: 100,
       height: 100,
       bytes: 100,
@@ -58,7 +61,17 @@ describe('ItemController', () => {
         image: [],
         ownerItemId: '',
       };
-      const result = await controller.create(mockItemDto, []);
+      const mockImage = [
+        {
+          fieldname: 'image',
+          originalname: 'test.jpg',
+          encoding: '7bit',
+          mimetype: 'image/jpeg',
+          buffer: Buffer.from('test_image_data'),
+          size: 1000,
+        } as Express.Multer.File,
+      ];
+      const result = await controller.create(mockItemDto, mockImage);
       expect(mockItem.create).toHaveBeenCalled();
       expect(result).toEqual({ id: 1 });
     });
