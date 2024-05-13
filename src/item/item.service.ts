@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateItemDto, Item, UpdateItemDto } from './entities/item.entity';
 import { PrismaService } from '../prisma/prisma.service';
+import { ImgData } from '../user/entities/avatar.entity';
 
 const select = {
   title: true,
   content: true,
   price: true,
+  image: true,
   owner: {
     select: {
       id: true,
@@ -18,10 +21,11 @@ const select = {
 export class ItemService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateItemDto): Promise<Partial<Item>> {
+  async create(data: CreateItemDto, imgData: ImgData): Promise<Partial<Item>> {
     return await this.prisma.item.create({
       data: {
         ...data,
+        image: imgData ? { create: imgData } : {},
       },
       select,
     });
