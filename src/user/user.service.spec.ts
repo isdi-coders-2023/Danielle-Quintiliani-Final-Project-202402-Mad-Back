@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserService } from './user.service';
+import { UserService, select } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto, UserUpdateDto } from './entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
@@ -46,6 +46,7 @@ describe('UserService with good response', () => {
     const result = await service.findOne('1');
     expect(mock.user.findUnique).toHaveBeenCalledWith({
       where: { id: '1' },
+      select,
     });
     expect(result).toEqual({ id: 1 });
   });

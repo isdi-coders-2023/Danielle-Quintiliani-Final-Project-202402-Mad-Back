@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ItemImage } from './entities/image.entity';
+import { ItemImg } from './entities/image.entity';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ImageService {
   constructor(private service: PrismaService) {}
 
-  async create(data: ItemImage) {
+  async create(data: ItemImg) {
     return await this.service.itemImg.create({ data });
   }
 
