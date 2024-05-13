@@ -11,18 +11,15 @@ import {
   SetMetadata,
   Inject,
   UseGuards,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
-  UploadedFile,
   UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { ItemService } from './item.service';
 import { CreateItemDto, UpdateItemDto } from './entities/item.entity';
 import { OwnerGuard } from '../core/guard/owner.guard';
 import { ImgData } from '../user/entities/avatar.entity';
 import { FileService } from '../core/file/file.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 const Owner = (creatorId: string) => SetMetadata('ownerKey', creatorId);
 
@@ -53,25 +50,26 @@ export class ItemController {
     };
   };
 
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FilesInterceptor('image'))
   @Post('/add')
   async create(
     @Body() createItemDto: CreateItemDto,
-    @UploadedFile(
-      new ParseFilePipe({
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    /* file: Express.Multer.File, */
+  ) /*   new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 100_000 }),
           new FileTypeValidator({ fileType: 'image/' }),
         ],
         fileIsRequired: false,
-      }),
-    )
-    file: Express.Multer.File,
-  ) {
-    let images: ImgData;
-    console.log(createItemDto);
-    if (file) {
-      images = await this.images(file, createItemDto.ownerItemId);
+      }), */ {
+    let images: ImgData[];
+    if (files) {
+      images = await Promise.all(
+        files.map(
+          async (image) => await this.images(image, createItemDto.ownerItemId),
+        ),
+      );
     }
     return this.itemService.create(createItemDto, images);
   }

@@ -2,6 +2,22 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ItemController } from './item.controller';
 import { ItemService } from './item.service';
 import { UpdateItemDto } from './entities/item.entity';
+import { FileService } from '../core/file/file.service';
+
+const mockFiles = {
+  uploadImage: jest.fn().mockResolvedValue([
+    {
+      public_id: 'public_id',
+      folder: 'folder',
+      secure_url: 'secure_url',
+      resource_type: 'resource_type',
+      format: 'format',
+      width: 100,
+      height: 100,
+      bytes: 100,
+    },
+  ]),
+} as unknown as FileService;
 
 const mockItem = {
   create: jest.fn().mockResolvedValue({ id: 1 }),
@@ -19,6 +35,7 @@ describe('ItemController', () => {
       controllers: [ItemController],
       providers: [
         { provide: ItemService, useValue: mockItem },
+        { provide: FileService, useValue: mockFiles },
         {
           provide: 'REPO_SERVICE',
           useValue: mockItem,
@@ -38,9 +55,10 @@ describe('ItemController', () => {
         title: '',
         price: '',
         content: '',
+        image: [],
         ownerItemId: '',
       };
-      const result = await controller.create(mockItemDto);
+      const result = await controller.create(mockItemDto, []);
       expect(mockItem.create).toHaveBeenCalled();
       expect(result).toEqual({ id: 1 });
     });
