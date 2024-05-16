@@ -10,6 +10,7 @@ const select = {
   content: true,
   price: true,
   image: true,
+  category: true,
   owner: {
     select: {
       id: true,

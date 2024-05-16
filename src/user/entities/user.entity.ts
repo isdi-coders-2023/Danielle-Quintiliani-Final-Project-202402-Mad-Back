@@ -1,4 +1,4 @@
-import { Item } from 'src/item/entities/item.entity';
+import { Item } from '../../item/entities/item.entity';
 import { ImgData } from './avatar.entity';
 
 export class User {
