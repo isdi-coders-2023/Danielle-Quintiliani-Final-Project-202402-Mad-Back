@@ -64,6 +64,25 @@ export const select = {
       },
     },
   },
+  favorite: {
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      price: true,
+      owner: true,
+      image: {
+        select: {
+          publicId: true,
+          secureUrl: true,
+          width: true,
+          height: true,
+          format: true,
+          originalName: true,
+        },
+      },
+    },
+  },
 };
 
 @Injectable()
