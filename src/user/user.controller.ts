@@ -145,6 +145,15 @@ export class UserController {
     return this.userService.update(id, updateUserDto, avatar);
   }
 
+  @Post(':userId/favorite/:itemId')
+  async addToFavorites(
+    @Param('userId') userId: string,
+    @Param('itemId') itemId: string,
+  ) {
+    await this.userService.addToFavorites(userId, itemId);
+    return { message: 'Item added to favorites successfully' };
+  }
+
   @Delete('/:id')
   async remove(@Param('id') id: string) {
     return await this.userService.remove(id);

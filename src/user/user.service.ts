@@ -128,6 +128,19 @@ export class UserService {
 
     return result;
   }
+  async addToFavorites(userId: string, itemId: string): Promise<void> {
+    await this.service.user.update({
+      where: { id: userId },
+      data: {
+        favorite: {
+          connect: { id: itemId },
+        },
+      },
+      include: {
+        favorite: true,
+      },
+    });
+  }
 
   async update(
     id: string,

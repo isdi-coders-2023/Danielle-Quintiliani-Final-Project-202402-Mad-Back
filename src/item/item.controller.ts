@@ -77,7 +77,7 @@ export class ItemController {
     return await this.itemService.findMyItem(id);
   }
 
-  @Get()
+  @Get('/category/:category')
   async getCategory(@Param('category') category: Category) {
     return await this.itemService.findByCategory(category);
   }
