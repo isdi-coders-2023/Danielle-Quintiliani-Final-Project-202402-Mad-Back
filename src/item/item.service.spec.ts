@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ItemService } from './item.service';
+import { ItemService, select } from './item.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateItemDto, UpdateItemDto } from './entities/item.entity';
 import { NotFoundException } from '@nestjs/common';
@@ -27,7 +27,6 @@ describe('ItemService', () => {
         ItemService,
       ],
     }).compile();
-
     service = module.get<ItemService>(ItemService);
   });
 
@@ -46,6 +45,22 @@ describe('ItemService', () => {
     });
     expect(result).toEqual({ id: 1 });
   });
+  it('should find items by category', async () => {
+    const category = 'MOTO';
+    const mockFindMany = jest
+      .fn()
+      .mockResolvedValue([{ id: 1, category: 'MOTO' }]);
+
+    itemMock.item.findMany = mockFindMany;
+    const result = await service.findByCategory(category);
+
+    expect(itemMock.item.findMany).toHaveBeenCalledWith({
+      where: { category },
+      select,
+    });
+    expect(result).toEqual([{ id: 1, category: 'MOTO' }]);
+  });
+
   it('should return the created item', async () => {
     const files = new Array(2).fill({} as Express.Multer.File);
     const data: CreateItemDto = {} as CreateItemDto;

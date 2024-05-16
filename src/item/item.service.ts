@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateItemDto, UpdateItemDto } from './entities/item.entity';
+import { Category, CreateItemDto, UpdateItemDto } from './entities/item.entity';
 import { PrismaService } from '../prisma/prisma.service';
 import { ImgData } from '../user/entities/avatar.entity';
 
-const select = {
+export const select = {
   id: true,
   title: true,
   content: true,
@@ -47,6 +47,12 @@ export class ItemService {
     } catch (error) {
       throw new NotFoundException(`Item ${id} not found`);
     }
+  }
+  async findByCategory(category: Category) {
+    return await this.prisma.item.findMany({
+      where: { category },
+      select,
+    });
   }
 
   async updateItem(id: string, updateItemDto: UpdateItemDto) {
