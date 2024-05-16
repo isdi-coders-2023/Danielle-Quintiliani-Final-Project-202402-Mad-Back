@@ -85,6 +85,22 @@ describe('UserService with good response', () => {
       );
       expect(result).toEqual({ id: 3 });
     });
+    it('should update user adding to favorites', async () => {
+      await service.addToFavorites('1', '2');
+      expect(mock.user.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: '1' },
+          data: {
+            favorite: {
+              connect: { id: '2' },
+            },
+          },
+          include: {
+            favorite: true,
+          },
+        }),
+      );
+    });
   });
 
   describe('UserService throw error', () => {
