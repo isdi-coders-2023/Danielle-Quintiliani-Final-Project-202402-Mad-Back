@@ -15,7 +15,7 @@ import {
   UploadedFiles,
 } from '@nestjs/common';
 import { ItemService } from './item.service';
-import { CreateItemDto, UpdateItemDto } from './entities/item.entity';
+import { Category, CreateItemDto, UpdateItemDto } from './entities/item.entity';
 import { OwnerGuard } from '../core/guard/owner.guard';
 import { ImgData } from '../user/entities/avatar.entity';
 import { FileService } from '../core/file/file.service';
@@ -55,14 +55,7 @@ export class ItemController {
   async create(
     @Body() createItemDto: CreateItemDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
-    /* file: Express.Multer.File, */
-  ) /*   new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 100_000 }),
-          new FileTypeValidator({ fileType: 'image/' }),
-        ],
-        fileIsRequired: false,
-      }), */ {
+  ) {
     let images: ImgData[];
     if (files) {
       images = await Promise.all(
@@ -82,6 +75,11 @@ export class ItemController {
   @Get('/:id')
   async findOne(@Param('id') id: string) {
     return await this.itemService.findMyItem(id);
+  }
+
+  @Get()
+  async getCategory(@Param('category') category: Category) {
+    return await this.itemService.findByCategory(category);
   }
 
   @Owner('owner')

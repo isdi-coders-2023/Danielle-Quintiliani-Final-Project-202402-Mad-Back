@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ItemService } from './item.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateItemDto, UpdateItemDto } from './entities/item.entity';
+import { Category, CreateItemDto, UpdateItemDto } from './entities/item.entity';
 import { NotFoundException } from '@nestjs/common';
 
 const itemMock = {
@@ -45,6 +45,19 @@ describe('ItemService', () => {
       where: { id: '1' },
     });
     expect(result).toEqual({ id: 1 });
+  });
+  it('should findByCategory a item', async () => {
+    const mockFindMany = jest
+      .fn()
+      .mockResolvedValue([{ id: 1, category: 'Electronics' }]);
+    service.findByCategory = mockFindMany;
+
+    const result = await service.findByCategory('Electronics' as Category);
+
+    expect(mockFindMany).toHaveBeenCalledWith('Electronics');
+    expect(result).toEqual([{ id: 1, category: 'Electronics' }]);
+
+    service.findByCategory = itemMock.item.findMany;
   });
   it('should return the created item', async () => {
     const files = new Array(2).fill({} as Express.Multer.File);

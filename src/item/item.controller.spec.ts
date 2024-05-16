@@ -27,6 +27,7 @@ const mockItem = {
   create: jest.fn().mockResolvedValue({ id: 1 }),
   findAllItem: jest.fn().mockResolvedValue([{ id: 2 }]),
   findMyItem: jest.fn().mockResolvedValue({ id: 3 }),
+  findByCategory: jest.fn().mockResolvedValue([{ id: 6 }]),
   updateItem: jest.fn().mockResolvedValue({ id: 4 }),
   removeItem: jest.fn().mockResolvedValue({ id: 5 }),
 } as unknown as ItemService;
@@ -91,6 +92,14 @@ describe('ItemController', () => {
         expect(result).toEqual({ id: 3 });
       });
     });
+    describe('When we use the method getCategory', () => {
+      it('should return the item with the category', async () => {
+        const result = await controller.getCategory('CLOTHES');
+        expect(mockItem.findByCategory).toHaveBeenCalled();
+        expect(result).toEqual([{ id: 6 }]);
+      });
+    });
+
     describe('When we use the method update', () => {
       it('should update a item', async () => {
         const mockItemDto = {
