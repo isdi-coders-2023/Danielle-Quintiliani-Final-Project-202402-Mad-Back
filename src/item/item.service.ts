@@ -4,7 +4,7 @@ import { Category, CreateItemDto, UpdateItemDto } from './entities/item.entity';
 import { PrismaService } from '../prisma/prisma.service';
 import { ImgData } from '../user/entities/avatar.entity';
 
-const select = {
+export const select = {
   id: true,
   title: true,
   content: true,
