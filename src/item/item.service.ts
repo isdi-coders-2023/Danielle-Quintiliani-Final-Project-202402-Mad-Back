@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ImgData } from '../user/entities/avatar.entity';
 
 const select = {
+  id: true,
   title: true,
   content: true,
   price: true,

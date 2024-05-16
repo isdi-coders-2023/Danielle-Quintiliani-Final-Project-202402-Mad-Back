@@ -8,6 +8,7 @@ export class User {
   password: string;
   birthday: string;
   avatar: Partial<ImgData> | null;
+  favorite: Item[];
   item: Item[];
   role: 'USER' | 'ADMIN' | 'CLUB';
 }

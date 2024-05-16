@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,8 +19,7 @@ email String @unique
 password String
 birthday String
 avatar Avatar?
-item Item[] @relation(name: "owner")
-favorite Item[] @relation(name: "favoriteBy")
+item Item[]
 role Role @default(USER)
 iscriptionAt DateTime @default(now())
 updateAt DateTime @updatedAt
@@ -30,9 +35,7 @@ id String @id @default(cuid())
 title String
 content String
 price String
-owner User @relation(fields: [ownerItemId], references: [id], name: "owner")
-favoriteBy User[] @relation(  name: "favoriteBy")
-favoriteById String[]
+owner User @relation(fields: [ownerItemId], references: [id])
 ownerItemId String
 image ItemImg[]
 createdAt DateTime @default(now())
