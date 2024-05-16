@@ -3,6 +3,7 @@ import { ItemController } from './item.controller';
 import { ItemService } from './item.service';
 import { UpdateItemDto } from './entities/item.entity';
 import { FileService } from '../core/file/file.service';
+import { Category } from './entities/item.entity';
 
 const mockFiles = {
   uploadImage: jest.fn().mockResolvedValue([
@@ -59,6 +60,7 @@ describe('ItemController', () => {
         price: '',
         content: '',
         image: [],
+        category: 'MOTO' as Category,
         ownerItemId: '',
       };
       const mockImage = [

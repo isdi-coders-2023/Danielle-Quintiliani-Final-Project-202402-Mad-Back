@@ -52,6 +52,7 @@ export const select = {
       content: true,
       price: true,
       owner: true,
+      category: true,
       image: {
         select: {
           publicId: true,
@@ -71,6 +72,7 @@ export const select = {
       content: true,
       price: true,
       owner: true,
+      category: true,
       image: {
         select: {
           publicId: true,

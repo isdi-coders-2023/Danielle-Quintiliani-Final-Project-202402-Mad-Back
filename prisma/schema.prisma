@@ -30,6 +30,7 @@ id String @id @default(cuid())
 title String
 content String
 price String
+category Category @default(OTHER)
 owner User @relation(fields: [ownerItemId], references: [id], name: "owner")
 favoriteBy User[] @relation(  name: "favoriteBy")
 favoriteById String[]
@@ -37,6 +38,12 @@ ownerItemId String
 image ItemImg[]
 createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt
+}
+enum Category {
+  CLOTHES
+  MOTO
+  SPAREPARTS
+  OTHER
 }
 model Avatar {
   id           String   @id @default(cuid())

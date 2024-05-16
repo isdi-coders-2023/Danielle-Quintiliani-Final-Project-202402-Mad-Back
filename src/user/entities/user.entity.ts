@@ -1,4 +1,4 @@
-import { Item } from 'src/item/entities/item.entity';
+import { Item } from '../../item/entities/item.entity';
 import { ImgData } from './avatar.entity';
 
 export class User {
@@ -10,8 +10,9 @@ export class User {
   avatar: Partial<ImgData> | null;
   favorite: Item[];
   item: Item[];
-  role: 'USER' | 'ADMIN' | 'CLUB';
+  role: Role;
 }
+export type Role = 'USER' | 'ADMIN' | 'CLUB';
 export class CreateUserDto {
   name: string;
   email: string;
@@ -31,5 +32,5 @@ export class SignUser {
   id: string;
   email?: string;
   password: string;
-  role: 'USER' | 'ADMIN' | 'CLUB';
+  role: Role;
 }
