@@ -7,6 +7,7 @@ import { CoreModule } from './core/core.module';
 import { ConfigModule } from '@nestjs/config';
 import { ItemModule } from './item/item.module';
 import { ImageModule } from './image/image.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ImageModule } from './image/image.module';
     CoreModule,
     ItemModule,
     ImageModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
