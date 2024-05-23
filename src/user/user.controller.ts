@@ -154,6 +154,15 @@ export class UserController {
     return { message: 'Item added to favorites successfully' };
   }
 
+  @Delete(':userId/favorite/:itemId')
+  async removeFromFavorites(
+    @Param('userId') userId: string,
+    @Param('itemId') itemId: string,
+  ) {
+    await this.userService.removeFromFavorites(userId, itemId);
+    return { message: 'Item removed from favorites successfully' };
+  }
+
   @Delete('/:id')
   async remove(@Param('id') id: string) {
     return await this.userService.remove(id);

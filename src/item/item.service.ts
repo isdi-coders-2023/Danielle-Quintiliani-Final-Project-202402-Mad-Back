@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Category, CreateItemDto, UpdateItemDto } from './entities/item.entity';
 import { PrismaService } from '../prisma/prisma.service';
 import { ImgData } from '../user/entities/avatar.entity';
+import { Item } from './entities/item.entity';
 
 export const select = {
   id: true,
@@ -70,10 +71,20 @@ export class ItemService {
   }
 
   async removeItem(id: string) {
-    try {
-      return await this.prisma.item.delete({ where: { id } });
-    } catch (error) {
-      throw new NotFoundException(`Item ${id} not found`);
+    const itemImages = await this.prisma.itemImg.findMany({
+      where: { itemId: id },
+    });
+    const removeImage = itemImages.map(async (image) => {
+      return await this.prisma.itemImg.delete({ where: { id: image.id } });
+    });
+
+    const item = await this.prisma.item.findUnique({ where: { id } });
+    if (item) {
+      try {
+        return await this.prisma.item.delete({ where: { id } });
+      } catch (error) {
+        throw new NotFoundException(`Item ${id} not found`);
+      }
     }
   }
 }

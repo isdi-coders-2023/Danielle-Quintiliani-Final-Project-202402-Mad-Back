@@ -13,6 +13,9 @@ const mockUser = {
   addToFavorites: jest
     .fn()
     .mockResolvedValue({ message: 'Item added to favorites successfully' }),
+  removeFromFavorites: jest
+    .fn()
+    .mockResolvedValue({ message: 'Item removed to favorites successfully' }),
   findOne: jest.fn().mockResolvedValue({ id: 3 }),
   update: jest.fn().mockResolvedValue({ id: 4 }),
   remove: jest.fn().mockResolvedValue({ id: 5 }),
@@ -120,6 +123,14 @@ describe('UserController', () => {
         expect(mockUser.addToFavorites).toHaveBeenCalled();
         expect(result).toStrictEqual({
           message: 'Item added to favorites successfully',
+        });
+      });
+    });
+    describe('When we use the method update for remove a favorite', () => {
+      it('should remove a favorite', async () => {
+        const result = await controller.removeFromFavorites('1', '2');
+        expect(result).toEqual({
+          message: 'Item removed from favorites successfully',
         });
       });
     });
