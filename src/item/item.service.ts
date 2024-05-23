@@ -3,7 +3,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Category, CreateItemDto, UpdateItemDto } from './entities/item.entity';
 import { PrismaService } from '../prisma/prisma.service';
 import { ImgData } from '../user/entities/avatar.entity';
-import { Item } from './entities/item.entity';
 
 export const select = {
   id: true,
@@ -24,10 +23,7 @@ export const select = {
 export class ItemService {
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    data: CreateItemDto,
-    images: ImgData[],
-  ) /* : Promise<Partial<Item>> */ {
+  async create(data: CreateItemDto, images: ImgData[]) {
     return await this.prisma.item.create({
       data: {
         ...data,

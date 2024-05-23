@@ -125,19 +125,6 @@ describe('ItemService', () => {
     expect(itemMock.item.findUnique).toHaveBeenCalledWith({ where: { id } });
     expect(itemMock.item.delete).toHaveBeenCalledWith({ where: { id } });
   });
-  /* it('should throw NotFoundException if item does not exist', async () => {
-    const id = '4';
-
-    // Mock findUnique to return null
-    itemMock.item.findUnique.mockResolvedValueOnce(null);
-
-    await expect(service.removeItem(id)).rejects.toThrow(
-      `Item ${id} not found`,
-    );
-
-    expect(itemMock.item.findUnique).toHaveBeenCalledWith({ where: { id } });
-    expect(itemMock.item.delete).not.toHaveBeenCalled();
-  }); */
   it('should throw NotFoundException if delete fails', async () => {
     const id = '5';
 
