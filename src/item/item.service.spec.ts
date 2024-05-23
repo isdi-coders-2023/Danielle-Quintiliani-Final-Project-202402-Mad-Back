@@ -3,6 +3,7 @@ import { ItemService, select } from './item.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateItemDto, UpdateItemDto } from './entities/item.entity';
 import { NotFoundException } from '@nestjs/common';
+import { ImageService } from '../image/image.service';
 
 const itemMock = {
   item: {
@@ -10,7 +11,11 @@ const itemMock = {
     findUnique: jest.fn().mockResolvedValue({ id: 1 }),
     create: jest.fn().mockResolvedValue({ id: 2 }),
     update: jest.fn().mockResolvedValue({ id: 3 }),
-    delete: jest.fn().mockResolvedValue({ id: 4 }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+  },
+  itemImg: {
+    findMany: jest.fn().mockResolvedValue([{ id: 1 }, { id: 2 }]),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
   },
 };
 
@@ -25,6 +30,7 @@ describe('ItemService', () => {
           useValue: itemMock,
         },
         ItemService,
+        ImageService,
       ],
     }).compile();
     service = module.get<ItemService>(ItemService);
@@ -68,6 +74,31 @@ describe('ItemService', () => {
     expect(itemMock.item.create).toHaveBeenCalled();
     expect(result).toEqual({ id: 2 });
   });
+  it('should create an item without images', async () => {
+    const data: CreateItemDto = {
+      title: 'Item 1',
+      content: '',
+      price: '',
+      ownerItemId: '',
+      category: 'CLOTHES',
+      image: [],
+    };
+    const images = null;
+    const createdItem = { id: 1, ...data };
+    itemMock.item.create.mockResolvedValueOnce(createdItem);
+
+    const result = await service.create(data, images);
+
+    expect(itemMock.item.create).toHaveBeenCalledWith({
+      data: {
+        ...data,
+        image: {},
+      },
+      select,
+    });
+
+    expect(result).toEqual(createdItem);
+  });
   it('should Update a item', async () => {
     const result = await service.updateItem(
       '3',
@@ -79,13 +110,34 @@ describe('ItemService', () => {
     );
     expect(result).toEqual({ id: 3 });
   });
-  it('should remove a item', async () => {
-    const result = await service.removeItem('4');
-    expect(itemMock.item.delete).toHaveBeenCalledTimes(1);
-    expect(itemMock.item.delete).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: '4' } }),
+  it('should remove all item images and the item itself', async () => {
+    const id = '1';
+
+    await service.removeItem(id);
+
+    expect(itemMock.itemImg.findMany).toHaveBeenCalledWith({
+      where: { itemId: id },
+    });
+    expect(itemMock.itemImg.delete).toHaveBeenCalledTimes(2);
+    expect(itemMock.itemImg.delete).toHaveBeenCalledWith({ where: { id: 1 } });
+    expect(itemMock.itemImg.delete).toHaveBeenCalledWith({ where: { id: 2 } });
+
+    expect(itemMock.item.findUnique).toHaveBeenCalledWith({ where: { id } });
+    expect(itemMock.item.delete).toHaveBeenCalledWith({ where: { id } });
+  });
+  it('should throw NotFoundException if delete fails', async () => {
+    const id = '5';
+
+    itemMock.item.findUnique.mockResolvedValueOnce({ id });
+
+    itemMock.item.delete.mockRejectedValueOnce(new Error('Delete failed'));
+
+    await expect(service.removeItem(id)).rejects.toThrow(
+      `Item ${id} not found`,
     );
-    expect(result).toEqual({ id: 4 });
+
+    expect(itemMock.item.findUnique).toHaveBeenCalledWith({ where: { id } });
+    expect(itemMock.item.delete).toHaveBeenCalledWith({ where: { id } });
   });
   describe('ItemService throw error', () => {
     let service: ItemService;
@@ -117,12 +169,6 @@ describe('ItemService', () => {
     test('should throw error on update', async () => {
       const id = '3';
       await expect(service.updateItem(id, {})).rejects.toThrow(
-        `Item ${id} not found`,
-      );
-    });
-    test('should throw error on remove', async () => {
-      const id = '4';
-      await expect(service.removeItem(id)).rejects.toThrow(
         `Item ${id} not found`,
       );
     });

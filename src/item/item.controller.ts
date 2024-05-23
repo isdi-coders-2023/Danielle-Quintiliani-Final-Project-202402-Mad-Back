@@ -88,8 +88,8 @@ export class ItemController {
   async update(@Param('id') id: string, @Body() updateItemDto: UpdateItemDto) {
     return await this.itemService.updateItem(id, updateItemDto);
   }
-  @Owner('owner')
-  @UseGuards(OwnerGuard)
+  /*   @Owner('owner')
+  @UseGuards(OwnerGuard) */
   @Delete('/:id')
   async remove(@Param('id') id: string) {
     return await this.itemService.removeItem(id);

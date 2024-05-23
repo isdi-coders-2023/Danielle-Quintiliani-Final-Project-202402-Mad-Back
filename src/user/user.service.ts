@@ -141,6 +141,19 @@ export class UserService {
       },
     });
   }
+  async removeFromFavorites(userId: string, itemId: string): Promise<void> {
+    await this.service.user.update({
+      where: { id: userId },
+      data: {
+        favorite: {
+          disconnect: { id: itemId },
+        },
+      },
+      include: {
+        favorite: true,
+      },
+    });
+  }
 
   async update(
     id: string,

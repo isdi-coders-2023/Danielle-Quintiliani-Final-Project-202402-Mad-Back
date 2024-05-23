@@ -73,17 +73,50 @@ describe('UserService with good response', () => {
         expect(result).toEqual({ id: 2 });
       });
     });
-    it('should Update a user', async () => {
-      const result = await service.update(
-        '3',
-        {} as unknown as Partial<UserUpdateDto>,
-        null,
-      );
-      expect(mock.user.update).toHaveBeenCalledTimes(1);
-      expect(mock.user.update).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { id: '3' } }),
-      );
-      expect(result).toEqual({ id: 3 });
+    describe('When we use the method update', () => {
+      describe('And we do not provide an image', () => {
+        it('Then it should return the updated user', async () => {
+          const data: Partial<UserUpdateDto> = {}; // Your data here
+          const result = await service.update('3', data, null);
+          expect(mock.user.update).toHaveBeenCalledWith(
+            expect.objectContaining({
+              where: { id: '3' },
+              data: expect.objectContaining({ avatar: {} }),
+            }),
+          );
+          expect(result).toEqual({ id: 3 });
+        });
+      });
+
+      describe('And we provide an image', () => {
+        it('Then it should return the updated user with the image', async () => {
+          const data: Partial<UserUpdateDto> = {}; // Your data here
+          const mockImageDto = {
+            itemId: '',
+            publicId: '',
+            folder: '',
+            fieldName: '',
+            originalName: '',
+            secureUrl: '',
+            resourceType: '',
+            mimetype: '',
+            format: '',
+            width: 1,
+            height: 1,
+            bytes: 1,
+          }; // Your image data here
+          const result = await service.update('3', data, mockImageDto);
+          expect(mock.user.update).toHaveBeenCalledWith(
+            expect.objectContaining({
+              where: { id: '3' },
+              data: expect.objectContaining({
+                avatar: {},
+              } as unknown as ImgData),
+            }),
+          );
+          expect(result).toEqual({ id: 3 });
+        });
+      });
     });
     it('should update user adding to favorites', async () => {
       await service.addToFavorites('1', '2');
@@ -93,6 +126,22 @@ describe('UserService with good response', () => {
           data: {
             favorite: {
               connect: { id: '2' },
+            },
+          },
+          include: {
+            favorite: true,
+          },
+        }),
+      );
+    });
+    it('should update user removing from favorites', async () => {
+      await service.removeFromFavorites('1', '2');
+      expect(mock.user.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: '1' },
+          data: {
+            favorite: {
+              disconnect: { id: '2' },
             },
           },
           include: {

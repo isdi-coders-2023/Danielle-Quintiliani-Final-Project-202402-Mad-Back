@@ -23,10 +23,7 @@ export const select = {
 export class ItemService {
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    data: CreateItemDto,
-    images: ImgData[],
-  ) /* : Promise<Partial<Item>> */ {
+  async create(data: CreateItemDto, images: ImgData[]) {
     return await this.prisma.item.create({
       data: {
         ...data,
@@ -70,10 +67,20 @@ export class ItemService {
   }
 
   async removeItem(id: string) {
-    try {
-      return await this.prisma.item.delete({ where: { id } });
-    } catch (error) {
-      throw new NotFoundException(`Item ${id} not found`);
+    const itemImages = await this.prisma.itemImg.findMany({
+      where: { itemId: id },
+    });
+    const removeImage = itemImages.map(async (image) => {
+      return await this.prisma.itemImg.delete({ where: { id: image.id } });
+    });
+
+    const item = await this.prisma.item.findUnique({ where: { id } });
+    if (item) {
+      try {
+        return await this.prisma.item.delete({ where: { id } });
+      } catch (error) {
+        throw new NotFoundException(`Item ${id} not found`);
+      }
     }
   }
 }
